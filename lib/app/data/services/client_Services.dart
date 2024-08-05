@@ -1,11 +1,11 @@
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:tractory/utils/constants.dart';
 import 'dart:convert';
 import '../models/client_Model.dart';
 
 class ClientService extends GetxService {
-  final String baseUrl =
-      'https://tractor-managment-app-node.onrender.com/clients';
+  final String baseUrl = '${Constants.baseUrl}/clients';
 
   Future<List<Client>> getAllClients() async {
     final response = await http.get(Uri.parse(baseUrl));

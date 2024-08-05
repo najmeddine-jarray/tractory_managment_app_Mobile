@@ -1,12 +1,14 @@
 import 'dart:convert';
 
 import 'package:get/get.dart';
+import 'package:tractory/app/data/models/client_Model.dart';
 import '../../data/models/usage_Model.dart';
 import '../../data/models/tractor_Model.dart';
 import '../../data/models/equipment_Model.dart';
 import '../../data/models/driver_Model.dart';
 import '../../data/models/rental_Model.dart';
 import '../../data/models/invoice_Model.dart';
+import '../../data/services/client_Services.dart';
 import '../../data/services/usage_Services.dart';
 import '../../data/services/tractor_Services.dart';
 import '../../data/services/equipment_Services.dart';
@@ -21,6 +23,8 @@ class UsageController extends GetxController {
   var driverList = <Driver>[].obs;
   var rentalList = <Rental>[].obs;
   var invoiceList = <Invoice>[].obs;
+  var clientList = <Client>[].obs; // Add clientList
+
   var isLoading = true.obs;
   @override
   void onInit() {
@@ -39,7 +43,24 @@ class UsageController extends GetxController {
         fetchDrivers(),
         fetchRentals(),
         fetchInvoices(),
+        fetchClients(), // Include fetchClients
       ]);
+    } finally {
+      isLoading(false);
+    }
+  }
+
+  Future<void> fetchClients() async {
+    try {
+      isLoading(true);
+      var clientService = Get.find<ClientService>();
+      var clients = await clientService.getAllClients();
+      clientList.assignAll(clients);
+      String clientJson =
+          jsonEncode(clientList.map((item) => item.toJson()).toList());
+      print('Fetched Client Data: $clientJson');
+    } catch (e) {
+      print("Error fetching clients: $e");
     } finally {
       isLoading(false);
     }

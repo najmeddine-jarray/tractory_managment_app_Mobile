@@ -1,13 +1,14 @@
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:tractory/utils/constants.dart';
 import 'dart:convert';
 
 import '../models/expense_Model.dart';
 
 class ExpenseService extends GetxService {
+  final String baseUrl = '${Constants.baseUrl}/expenses';
   Future<List<Expense>> getAllExpenses() async {
-    final response = await http.get(
-        Uri.parse('https://tractor-managment-app-node.onrender.com/expenses'));
+    final response = await http.get(Uri.parse(baseUrl));
 
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
@@ -19,7 +20,7 @@ class ExpenseService extends GetxService {
 
   Future<void> addExpense(Expense expense) async {
     final response = await http.post(
-      Uri.parse('https://tractor-managment-app-node.onrender.com/expenses'),
+      Uri.parse(baseUrl),
       headers: {'Content-Type': 'application/json'},
       body: json.encode(expense.toJson()),
     );
@@ -30,8 +31,7 @@ class ExpenseService extends GetxService {
 
   Future<void> updateExpense(Expense expense) async {
     final response = await http.put(
-      Uri.parse(
-          'https://tractor-managment-app-node.onrender.com/expenses/${expense.id}'),
+      Uri.parse('$baseUrl/${expense.id}'),
       headers: {'Content-Type': 'application/json'},
       body: json.encode(expense.toJson()),
     );
@@ -41,8 +41,7 @@ class ExpenseService extends GetxService {
   }
 
   Future<void> deleteExpense(int id) async {
-    final response = await http.delete(Uri.parse(
-        'https://tractor-managment-app-node.onrender.com/expenses/$id'));
+    final response = await http.delete(Uri.parse('$baseUrl/$id'));
     if (response.statusCode != 204) {
       throw Exception('Failed to delete expense');
     }

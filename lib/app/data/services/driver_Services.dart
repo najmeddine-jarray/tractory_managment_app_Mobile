@@ -1,12 +1,12 @@
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:tractory/utils/constants.dart';
 import 'dart:convert';
 import '../models/driver_Model.dart';
 
 class DriverService extends GetxService {
   // Base URL for the API
-  final String baseUrl =
-      'https://tractor-managment-app-node.onrender.com/drivers';
+  final String baseUrl = '${Constants.baseUrl}/drivers';
 
   // Method to get all drivers
   Future<List<Driver>> getAllDrivers() async {

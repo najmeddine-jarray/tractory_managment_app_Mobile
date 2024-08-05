@@ -1,11 +1,11 @@
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:tractory/utils/constants.dart';
 import 'dart:convert';
 import '../models/tractor_Model.dart';
 
 class TractorService extends GetxService {
-  final String baseUrl =
-      'https://tractor-managment-app-node.onrender.com/tractors';
+  final String baseUrl = '${Constants.baseUrl}/tractors';
 
   Future<List<Tractor>> getAllTractors() async {
     try {

@@ -1,0 +1,58 @@
+[
+    {
+      
+        "type": "محراث",
+        "name": "Bou Galba",
+        "image": "https://i.ibb.co/jwtgfGJ/bouGalba.png",
+        "Price_hours": 50,
+        "maintenance_status": "Good"
+    },
+    {
+     
+        "type": "مضخة دواء",
+        "name": "Pulvérisateur 600L",
+        "image": "https://i.ibb.co/nrPSTbc/pulv-risateur-600l.png",
+        "Price_hours": 40,
+        "maintenance_status": "Good"
+    },
+    {
+        
+        "type": "محراث",
+        "name": "Big Canadian",
+        "image": "https://i.ibb.co/Trz1Sfp/big-Candian.png",
+        "Price_hours": 45,
+        "maintenance_status": "Good"
+    },
+    {
+         
+        "type": "محراث",
+        "name": "Offset",
+        "image": "https://i.ibb.co/9nRchW5/offset.png",
+        "Price_hours": 45,
+        "maintenance_status": "Good"
+    },
+    {
+      
+        "type": "محراث",
+        "name": "Small Disc",
+        "image": "https://i.ibb.co/NV6KDPY/Smaoll-Disc.png",
+        "Price_hours": 40,
+        "maintenance_status": "Good"
+    },
+    {
+        
+        "type": "محراث",
+        "name": "Small Canadian",
+        "image": "https://i.ibb.co/Fg5Km6K/Small-Candien.png",
+        "Price_hours": 45,
+        "maintenance_status": "Good"
+    },
+    {
+       
+        "type": "حصادة",
+        "name": "Batteuse",
+        "image": "https://i.ibb.co/CsDkH5j/batteuse.png",
+        "Price_hours": 120,
+        "maintenance_status": "Good"
+    }
+]

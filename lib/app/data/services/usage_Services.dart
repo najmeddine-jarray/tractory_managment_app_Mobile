@@ -6,9 +6,10 @@ import '../../../utils/constants.dart';
 import '../models/usage_Model.dart';
 
 class UsageService extends GetxService {
+  final String baseUrl = '${Constants.baseUrl}/usages';
+
   Future<List<Usage>> getAllUsage() async {
-    final response = await http.get(
-        Uri.parse('https://tractor-managment-app-node.onrender.com/usages'));
+    final response = await http.get(Uri.parse(baseUrl));
 
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
@@ -20,7 +21,7 @@ class UsageService extends GetxService {
 
   Future<void> addUsage(Usage usage) async {
     final response = await http.post(
-      Uri.parse('https://tractor-managment-app-node.onrender.com/usages'),
+      Uri.parse(baseUrl),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -34,8 +35,7 @@ class UsageService extends GetxService {
 
   Future<void> updateUsage(Usage usage) async {
     final response = await http.put(
-      Uri.parse(
-          'https://tractor-managment-app-node.onrender.com/usages/${usage.id}'),
+      Uri.parse('$baseUrl/${usage.id}'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -49,7 +49,7 @@ class UsageService extends GetxService {
 
   Future<void> deleteUsage(int id) async {
     final response = await http.delete(
-      Uri.parse('https://tractor-managment-app-node.onrender.com/usages/$id'),
+      Uri.parse('$baseUrl/$id'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

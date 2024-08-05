@@ -40,7 +40,7 @@ class InvoicePage extends GetView<InvoiceController> {
                 child: ListTile(
                   title: Text('Invoice ID: ${invoice.id}'),
                   subtitle: Text(
-                      'Usage ID: ${invoice.usageId}\nTotal Price: \$${invoice.totalPrice}\nPayment Status: ${invoice.paymentStatus}'),
+                      'Usage ID: ${invoice.usageId}\nTotal Price: ${invoice.totalPrice} Dinar\nPayment Status: ${invoice.paymentStatus}'),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [

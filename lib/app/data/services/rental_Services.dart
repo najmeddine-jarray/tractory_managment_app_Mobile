@@ -1,13 +1,15 @@
 // lib/data/services/rental_service.dart
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:tractory/utils/constants.dart';
 import 'dart:convert';
 import '../models/rental_Model.dart';
 
 class RentalService extends GetxService {
+  final baseUrl = '${Constants.baseUrl}/rentals';
+
   Future<List<Rental>> getAllRentals() async {
-    final response = await http.get(
-        Uri.parse('https://tractor-managment-app-node.onrender.com/rentals'));
+    final response = await http.get(Uri.parse(baseUrl));
 
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
@@ -19,7 +21,7 @@ class RentalService extends GetxService {
 
   Future<void> addRental(Rental rental) async {
     final response = await http.post(
-      Uri.parse('https://tractor-managment-app-node.onrender.com/rentals'),
+      Uri.parse(baseUrl),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -34,8 +36,7 @@ class RentalService extends GetxService {
   Future<void> updateRental(Rental rental) async {
     try {
       final response = await http.put(
-        Uri.parse(
-            'https://tractor-managment-app-node.onrender.com/rentals/${rental.id}'),
+        Uri.parse('$baseUrl/${rental.id}'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(rental.toJson()),
       );
@@ -49,7 +50,7 @@ class RentalService extends GetxService {
 
   Future<void> deleteRental(int id) async {
     final response = await http.delete(
-      Uri.parse('https://tractor-managment-app-node.onrender.com/rentals/$id'),
+      Uri.parse('$baseUrl/$id'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

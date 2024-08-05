@@ -89,7 +89,7 @@ class ExpensePage extends GetView<ExpenseController> {
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text('Fuel Cost: \$${expense.fuelCost}'),
+                                  Text('Fuel Cost: ${expense.fuelCost} Dinar'),
                                   Text(
                                       'Date: ${DateFormat('MM-dd-yyyy').format(expense.date)}'),
                                 ],

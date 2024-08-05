@@ -1,13 +1,15 @@
 // lib/data/services/invoice_service.dart
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:tractory/utils/constants.dart';
 import 'dart:convert';
 import '../models/invoice_Model.dart';
 
 class InvoiceService extends GetxService {
+  final baseUrl = '${Constants.baseUrl}/invoices';
+
   Future<List<Invoice>> getAllInvoices() async {
-    final response = await http.get(
-        Uri.parse('https://tractor-managment-app-node.onrender.com/invoices'));
+    final response = await http.get(Uri.parse(baseUrl));
 
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
@@ -19,7 +21,7 @@ class InvoiceService extends GetxService {
 
   Future<void> addInvoice(Invoice invoice) async {
     final response = await http.post(
-      Uri.parse('https://tractor-managment-app-node.onrender.com/invoices'),
+      Uri.parse('$baseUrl'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -33,8 +35,7 @@ class InvoiceService extends GetxService {
 
   Future<void> updateInvoice(Invoice invoice) async {
     final response = await http.put(
-      Uri.parse(
-          'https://tractor-managment-app-node.onrender.com/invoices/${invoice.id}'),
+      Uri.parse('$baseUrl/${invoice.id}'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -48,7 +49,7 @@ class InvoiceService extends GetxService {
 
   Future<void> deleteInvoice(int id) async {
     final response = await http.delete(
-      Uri.parse('https://tractor-managment-app-node.onrender.com/invoices/$id'),
+      Uri.parse('$baseUrl/$id'),
     );
 
     if (response.statusCode != 200) {

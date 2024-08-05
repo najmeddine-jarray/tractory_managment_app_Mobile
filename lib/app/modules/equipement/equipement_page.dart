@@ -9,7 +9,7 @@ class EquipmentPage extends GetView<EquipmentController> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _filterController = TextEditingController();
 
-  final List<String> _types = ["محراث", "حصادة", "مضخة", "دواء", "زراعة"];
+  final List<String> _types = ["محراث", "حصادة", "مضخة دواء", "زراعة"];
   final List<String> _maintenanceStatuses = [
     "Good",
     "Needs Service",
@@ -89,21 +89,24 @@ class EquipmentPage extends GetView<EquipmentController> {
                             subtitle: Row(
                               children: [
                                 CachedNetworkImage(
-                                  imageUrl: equipment.image,
+                                  imageUrl: "${equipment.image}",
                                   placeholder: (context, url) => Center(
                                       child: CircularProgressIndicator()),
                                   errorWidget: (context, url, error) =>
                                       Icon(Icons.error),
-                                  height: 50, // Adjust as needed
-                                  width: 50, // Adjust as needed
+                                  height: 65, // Adjust as needed
+                                  width: 65, // Adjust as needed
                                   fit: BoxFit.cover,
+                                ),
+                                SizedBox(
+                                  width: 10,
                                 ),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text('Type: ${equipment.type}'),
                                     Text(
-                                        'Price/hour: \$${equipment.priceHours}'),
+                                        'Price: ${equipment.priceHours} Dinar'),
                                     Text(
                                         'Status: ${equipment.maintenanceStatus}'),
                                   ],
@@ -270,7 +273,7 @@ class EquipmentPage extends GetView<EquipmentController> {
                   controller: priceHoursController,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
-                    hintText: 'Price/hour',
+                    hintText: 'Price',
                     filled: true,
                     fillColor: Colors.blueGrey.withOpacity(.1),
                     border: OutlineInputBorder(
@@ -280,7 +283,7 @@ class EquipmentPage extends GetView<EquipmentController> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter price/hour';
+                      return 'Please enter price';
                     }
                     if (double.tryParse(value) == null) {
                       return 'Please enter a valid number';

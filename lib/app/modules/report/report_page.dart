@@ -102,8 +102,8 @@ class ReportPage extends GetView<ReportController> {
                               style: Get.theme.textTheme.titleLarge,
                             ),
                             Text(
-                              "\$${controller.totalRevenue.value.toStringAsFixed(2)}",
-                              style: Get.theme.textTheme.headlineMedium,
+                              "${controller.totalRevenue.value.toStringAsFixed(2)} Dinar",
+                              style: Get.theme.textTheme.headlineSmall,
                             ),
                           ],
                         ),
