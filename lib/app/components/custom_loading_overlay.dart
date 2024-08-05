@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
-import 'package:logger/logger.dart';
 
 import '../../config/translations/strings_enum.dart';
 
@@ -14,7 +13,7 @@ showLoadingOverLay(
         await asyncFunction();
       } catch (error) {
         //rethrow;
-        Logger().e(error);
+        // Logger().e(error);
         //Logger().e(StackTrace.current);
       }
     },
