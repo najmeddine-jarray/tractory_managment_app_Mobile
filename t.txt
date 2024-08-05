@@ -1,0 +1,109 @@
+@startuml
+
+enum TractorType {
+    "Small"
+    "Medium"
+    "Large"
+}
+
+enum MaintenanceStatus {
+    "Operational"
+    "In Repair"
+    "Under Maintenance"
+    "Decommissioned"
+}
+
+enum PaymentStatus {
+    "Paid"
+    "Unpaid"
+    "Pending"
+    "Partially Paid"
+}
+
+class Client {
+    - id: int
+    - name: String
+    - phone: String
+    - address: String
+}
+
+class Tractor {
+    - id: int
+    - type: TractorType
+    - name: String
+    - image: String
+    - power: int
+    - Price_hours: double
+    - hours_used: double
+    - maintenance_status: MaintenanceStatus
+}
+
+class Equipment {
+    - id: int
+    - type: String
+    - purchase_date: Date
+    - hours_used: int
+    - maintenance_status: MaintenanceStatus
+}
+
+class Rental {
+    - id: int
+    - client_id: int
+    - tractor_id: int
+    - equipment_id: int
+    - Invoices_id: int
+    - rental_date: Date
+    - duration_hours: int
+}
+
+class Invoice {
+    - id: int
+    - rental_id: int
+    - total_price: float
+    - payment_status: PaymentStatus
+}
+
+class Expense {
+    - id: int
+    - tractor_id: int
+    - fuel_cost: float
+    - date: Date
+}
+
+class Report {
+    - id: int
+    - report_type: String
+    - content: String
+    - date: Date
+}
+
+class Driver {
+    - id: int
+    - name: String
+    - license_number: String
+    - phone: String
+    - assigned_tractor_id: int
+}
+
+class Usage {
+    - id: int
+    - tractor_id: int
+    - equipment_id: int
+    - driver_id: int
+    - location: String
+    - start_time: DateTime
+    - end_time: DateTime
+    - hours_used: int
+    - task_description: String
+}
+
+Client "1" -- "0..*" Rental: "has"
+Tractor "1" -- "0..*" Rental: "rented by"
+Tractor "1" -- "0..*" Expense: "has"
+Tractor "1" -- "0..*" Usage: "used by"
+Equipment "1" -- "0..*" Rental: "rented by"
+Equipment "1" -- "0..*" Usage: "used by"
+Rental "1" -- "1" Invoice: "has"
+Driver "1" -- "0..*" Usage: "assigned to"
+
+@enduml

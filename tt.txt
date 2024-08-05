@@ -1,0 +1,92 @@
+بالطبع، سأوضح العلاقات بين الجداول في قاعدة البيانات لإدارة الجرارات وآلات الحصاد والمعدات والعملاء والاستئجار والفواتير والمصاريف والتقارير والسائقين والاستخدام.
+
+## العلاقات بين الجداول:
+
+### 1. الجرارات (Tractors)
+- id: معرف الجرار (Primary Key)
+- يرتبط بـ: 
+  - Maintenance (صيانة) بعلاقة واحد إلى متعدد (One-to-Many)
+  - Fuel (وقود) بعلاقة واحد إلى متعدد (One-to-Many)
+  - Usage (استخدام) بعلاقة واحد إلى متعدد (One-to-Many)
+  - Expenses (مصاريف) بعلاقة واحد إلى متعدد (One-to-Many)
+  - Rental (استئجار) بعلاقة واحد إلى متعدد (One-to-Many)
+
+### 2. آلات الحصاد (Harvesters)
+- id: معرف آلة الحصاد (Primary Key)
+- يرتبط بـ: 
+  - Usage (استخدام) بعلاقة واحد إلى متعدد (One-to-Many)
+
+### 3. المعدات (Equipment)
+- id: معرف المعدات (Primary Key)
+- يرتبط بـ: 
+  - Usage (استخدام) بعلاقة واحد إلى متعدد (One-to-Many)
+  - Rental (استئجار) بعلاقة واحد إلى متعدد (One-to-Many)
+
+### 4. العملاء (Clients)
+- id: معرف العميل (Primary Key)
+- يرتبط بـ: 
+  - Rental (استئجار) بعلاقة واحد إلى متعدد (One-to-Many)
+
+### 5. الاستئجار (Rental)
+- id: معرف الاستئجار (Primary Key)
+- client_id: معرف العميل (Foreign Key)
+- tractor_id: معرف الجرار (Foreign Key)
+- equipment_id: معرف المعدات (Foreign Key)
+- يرتبط بـ: 
+  - Invoices (فواتير) بعلاقة واحد إلى واحد (One-to-One)
+
+### 6. الفواتير (Invoices)
+- id: معرف الفاتورة (Primary Key)
+- rental_id: معرف الاستئجار (Foreign Key)
+
+### 7. المصاريف (Expenses)
+- id: معرف المصاريف (Primary Key)
+- tractor_id: معرف الجرار (Foreign Key)
+
+### 8. التقارير (Reports)
+- *لا توجد علاقات مباشرة ولكن يمكن إنشاء تقارير بناءً على البيانات المتاحة في الجداول الأخرى*
+
+### 9. السائقين (Drivers)
+- id: معرف السائق (Primary Key)
+- assigned_tractor_id: معرف الجرار المخصص (Foreign Key)
+- يرتبط بـ: 
+  - Usage (استخدام) بعلاقة واحد إلى متعدد (One-to-Many)
+
+### 10. الاستخدام (Usage)
+- id: معرف الاستخدام (Primary Key)
+- tractor_id: معرف الجرار (Foreign Key)
+- harvester_id: معرف آلة الحصاد (Foreign Key)
+- equipment_id: معرف المعدات (Foreign Key)
+- driver_id: معرف السائق (Foreign Key)
+
+## العلاقات الكاملة بين الجداول:
+
+1. *Tractors* يمكن أن يرتبط بـ *Maintenance, **Fuel, **Usage, **Expenses, و **Rental*.
+2. *Harvesters* يمكن أن يرتبط بـ *Usage*.
+3. *Equipment* يمكن أن يرتبط بـ *Usage* و *Rental*.
+4. *Clients* يمكن أن يرتبط بـ *Rental*.
+5. *Rental* يمكن أن يرتبط بـ *Invoices*.
+6. *Expenses* يرتبط بـ *Tractors*.
+7. *Drivers* يمكن أن يرتبط بـ *Usage*.
+8. *Usage* يرتبط بـ *Tractors, **Harvesters, **Equipment, و **Drivers*.
+
+### توضيح العلاقات ERD (Entity-Relationship Diagram):
+
+
+Clients ---< Rental >--- Tractors
+                    |         |
+                    |         >--- Maintenance
+                    |         >--- Fuel
+                    |         >--- Usage
+                    |         >--- Expenses
+                    |
+                    >--- Equipment
+                    |
+                    >--- Invoices
+
+Harvesters >--- Usage
+
+Drivers >--- Usage
+
+
+هذا يوضح كيفية تفاعل الكيانات المختلفة في النظام مع بعضها البعض من خلال العلاقات المذكورة.
