@@ -1,34 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tractory/app/data/models/tractor_Model.dart';
 import 'package:tractory/app/modules/tractor/tractor_controller.dart';
 import 'package:tractory/utils/constants.dart';
-import '../../data/models/tractor_Model.dart';
-import '../../data/services/tractor_Services.dart';
 import 'package:cached_network_image/cached_network_image.dart'; // Import CachedNetworkImage
 
 class TractorPage extends GetView<TractorController> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
+  TractorPage({super.key});
+
   @override
   Widget build(BuildContext context) {
-    final isDark = MediaQuery.platformBrightnessOf(context) == Brightness.dark;
     final TextEditingController _filterController = TextEditingController();
 
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
-        title: Text('Tractors',
+        title: const Text('Tractors',
             style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
         backgroundColor: Constants.azreg,
         toolbarHeight: 50,
         actions: [
           IconButton(
               onPressed: () => controller.fetchTractors(),
-              icon: Icon(
+              icon: const Icon(
                 Icons.refresh_outlined,
               ))
         ],
-        shape: RoundedRectangleBorder(
+        shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(5)),
         ),
       ),
@@ -36,7 +36,30 @@ class TractorPage extends GetView<TractorController> {
         padding: const EdgeInsets.all(5.0),
         child: Obx(() {
           if (controller.isLoading.value) {
-            return Center(child: CircularProgressIndicator());
+            return Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 15),
+                  child: TextFormField(
+                    controller: _filterController,
+                    keyboardType: TextInputType.text,
+                    onChanged: (value) {
+                      controller.filterTractors(value.toLowerCase());
+                    },
+                    decoration: InputDecoration(
+                      filled: true,
+                      hintText: 'Filter by Tractor name or type',
+                      prefixIcon: const Icon(Icons.search_outlined, size: 20),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(15),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                  ),
+                ),
+                const Center(child: CircularProgressIndicator()),
+              ],
+            );
           }
 
           //  else if (controller.errorMessage.value.isNotEmpty) {
@@ -66,7 +89,7 @@ class TractorPage extends GetView<TractorController> {
                 ),
                 // Show "No Results" message if no tractors are found
                 if (controller.filteredTractors.isEmpty)
-                  Expanded(
+                  const Expanded(
                     child: Center(
                       child: Text('No Results',
                           style: TextStyle(color: Colors.grey, fontSize: 18)),
@@ -79,79 +102,120 @@ class TractorPage extends GetView<TractorController> {
                       itemBuilder: (context, index) {
                         final tractor = controller.filteredTractors[index];
                         return Card(
-                          elevation: 1,
-                          child: ListTile(
-                            contentPadding: const EdgeInsets.all(10.0),
-                            title: Text("${tractor.id} | ${tractor.name}",
-                                style: TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.bold)),
-                            subtitle: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                children: [
-                                  CachedNetworkImage(
-                                    imageUrl: "${tractor.image}",
-                                    placeholder: (context, url) => Center(
-                                        child: CircularProgressIndicator()),
-                                    errorWidget: (context, url, error) =>
-                                        Icon(Icons.error),
-                                    height: 65, // Adjust as needed
-                                    width: 65, // Adjust as needed
-                                    fit: BoxFit.cover,
-                                  ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text('Type: ${tractor.type}'),
-                                      Text('Power: ${tractor.power}'),
-                                      Text(
-                                          'Status: ${tractor.maintenanceStatus}'),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
+                          elevation: 2,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                IconButton(
-                                  icon:
-                                      Icon(Icons.edit, color: Constants.azreg),
-                                  onPressed: () => _showTractorDialog(context,
-                                      tractor: tractor),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // Title Row
+                                    Text(
+                                      "${tractor.id} | ${tractor.name}",
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+
+                                    // Content Row with Image and Details
+                                    Row(
+                                      spacing: 15,
+                                      children: [
+                                        // Image
+                                        CachedNetworkImage(
+                                          imageUrl: "${tractor.image}",
+                                          placeholder: (context, url) =>
+                                              const Center(
+                                                  child:
+                                                      CircularProgressIndicator()),
+                                          errorWidget: (context, url, error) =>
+                                              const Icon(Icons.error),
+                                          height: 70, // Adjust as needed
+                                          width: 70, // Adjust as needed
+                                          fit: BoxFit.cover,
+                                        ),
+
+                                        // Details
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Type: ${tractor.type}',
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                            Text(
+                                              'Power: ${tractor.power} HP',
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                            Text(
+                                              'Status: ${tractor.maintenanceStatus}',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color:
+                                                    tractor.maintenanceStatus ==
+                                                            "Good"
+                                                        ? Colors.green
+                                                        : Colors.red,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
-                                IconButton(
-                                  icon: Icon(Icons.delete, color: Colors.red),
-                                  onPressed: () => Get.defaultDialog(
-                                    title: 'Delete Tractor',
-                                    middleText:
-                                        'Are you sure you want to delete this tractor?',
-                                    confirm: ElevatedButton(
-                                      onPressed: () {
-                                        controller.deleteTractor(tractor.id!);
-                                        Get.back(); // Close dialog
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.red),
-                                      child: Text(
-                                        'Delete',
+                                Column(
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(Icons.edit,
+                                          color: Constants.azreg),
+                                      onPressed: () => _showTractorDialog(
+                                          context,
+                                          tractor: tractor),
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(Icons.delete,
+                                          color: Colors.red),
+                                      onPressed: () => Get.defaultDialog(
+                                        title: 'Delete Tractor',
+                                        middleText:
+                                            'Are you sure you want to delete this tractor?',
+                                        confirm: ElevatedButton(
+                                          onPressed: () {
+                                            controller
+                                                .deleteTractor(tractor.id!);
+                                            Get.back(); // Close dialog
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.red,
+                                          ),
+                                          child: const Text('Delete'),
+                                        ),
+                                        cancel: TextButton(
+                                          onPressed: () =>
+                                              Get.back(), // Close dialog
+                                          child: const Text('Cancel'),
+                                        ),
+                                        titlePadding:
+                                            const EdgeInsets.symmetric(
+                                                vertical: 20),
+                                        contentPadding:
+                                            const EdgeInsets.all(20),
                                       ),
                                     ),
-                                    cancel: TextButton(
-                                      onPressed: () =>
-                                          Get.back(), // Close dialog
-                                      child: Text(
-                                        'Cancel',
-                                      ),
-                                    ),
-                                    titlePadding:
-                                        EdgeInsets.symmetric(vertical: 20),
-                                    contentPadding: EdgeInsets.all(20),
-                                  ),
+                                  ],
                                 ),
                               ],
                             ),
@@ -167,12 +231,12 @@ class TractorPage extends GetView<TractorController> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showTractorDialog(context),
-        child: Icon(
+        backgroundColor: Constants.azreg,
+        tooltip: 'Add Tractor',
+        child: const Icon(
           Icons.add,
           color: Colors.white,
         ),
-        backgroundColor: Constants.azreg,
-        tooltip: 'Add Tractor',
       ),
     );
   }
@@ -181,23 +245,23 @@ class TractorPage extends GetView<TractorController> {
     final isEdit = tractor != null;
 
     final typeController =
-        TextEditingController(text: isEdit ? tractor!.type : '');
+        TextEditingController(text: isEdit ? tractor.type : '');
     final nameController =
-        TextEditingController(text: isEdit ? tractor!.name : '');
+        TextEditingController(text: isEdit ? tractor.name : '');
     final imageController =
-        TextEditingController(text: isEdit ? tractor!.image : '');
+        TextEditingController(text: isEdit ? tractor.image : '');
     final powerController =
-        TextEditingController(text: isEdit ? tractor!.power.toString() : '');
+        TextEditingController(text: isEdit ? tractor.power.toString() : '');
     // final hoursUsedController = TextEditingController(
     //     text: isEdit ? tractor!.hoursUsed.toString() : '');
     final maintenanceStatusController =
-        TextEditingController(text: isEdit ? tractor!.maintenanceStatus : '');
+        TextEditingController(text: isEdit ? tractor.maintenanceStatus : '');
     final isDark = MediaQuery.platformBrightnessOf(context) == Brightness.dark;
 
     Get.defaultDialog(
       title: isEdit ? 'Edit Tractor' : 'Add Tractor',
-      titlePadding: EdgeInsets.symmetric(vertical: 10),
-      contentPadding: EdgeInsets.all(20),
+      titlePadding: const EdgeInsets.symmetric(vertical: 10),
+      contentPadding: const EdgeInsets.all(20),
       radius: 10,
       content: SingleChildScrollView(
         child: Form(
@@ -218,18 +282,18 @@ class TractorPage extends GetView<TractorController> {
                     borderSide: BorderSide.none,
                   ),
                 ),
-                items: [
-                  DropdownMenuItem(child: Text('Tractor'), value: 'Tractor'),
+                items: const [
+                  DropdownMenuItem(value: 'Tractor', child: Text('Tractor')),
                   DropdownMenuItem(
-                      child: Text('Harvester'), value: 'Harvester'),
+                      value: 'Harvester', child: Text('Harvester')),
                   DropdownMenuItem(
-                      child: Text('Bulldozer'), value: 'Bulldozer'),
+                      value: 'Bulldozer', child: Text('Bulldozer')),
                 ],
                 onChanged: (value) => typeController.text = value!,
                 validator: (value) =>
                     value == null ? 'Please select a type' : null,
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               TextFormField(
                 controller: nameController,
                 decoration: InputDecoration(
@@ -249,7 +313,7 @@ class TractorPage extends GetView<TractorController> {
                   return null;
                 },
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               TextFormField(
                 controller: imageController,
                 decoration: InputDecoration(
@@ -269,7 +333,7 @@ class TractorPage extends GetView<TractorController> {
                   return null;
                 },
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               TextFormField(
                 controller: powerController,
                 keyboardType: TextInputType.number,
@@ -311,7 +375,7 @@ class TractorPage extends GetView<TractorController> {
               //     return null;
               //   },
               // ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               DropdownButtonFormField<String>(
                 value: maintenanceStatusController.text.isNotEmpty
                     ? maintenanceStatusController.text
@@ -326,12 +390,12 @@ class TractorPage extends GetView<TractorController> {
                     borderSide: BorderSide.none,
                   ),
                 ),
-                items: [
-                  DropdownMenuItem(child: Text('Good'), value: 'Good'),
+                items: const [
+                  DropdownMenuItem(value: 'Good', child: Text('Good')),
                   DropdownMenuItem(
-                      child: Text('Needs Service'), value: 'Needs Service'),
+                      value: 'Needs Service', child: Text('Needs Service')),
                   DropdownMenuItem(
-                      child: Text('Under Repair'), value: 'Under Repair'),
+                      value: 'Under Repair', child: Text('Under Repair')),
                 ],
                 onChanged: (value) => maintenanceStatusController.text = value!,
                 validator: (value) =>
@@ -345,7 +409,7 @@ class TractorPage extends GetView<TractorController> {
         onPressed: () {
           if (formKey.currentState!.validate()) {
             final newTractor = Tractor(
-              id: isEdit ? tractor!.id : null,
+              id: isEdit ? tractor.id : null,
               type: typeController.text,
               name: nameController.text,
               image: imageController.text,
@@ -371,7 +435,7 @@ class TractorPage extends GetView<TractorController> {
       ),
       cancel: TextButton(
         onPressed: () => Get.back(), // Close dialog
-        child: Text(
+        child: const Text(
           'Cancel',
           style: TextStyle(color: Colors.red),
         ),

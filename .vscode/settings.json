@@ -3,8 +3,10 @@
     "cSpell.words": [
         "ARGB",
         "azreg",
+        "Equipes",
         "Getx",
         "grey",
         "shopify"
-    ]
+    ],
+    "java.compile.nullAnalysis.mode": "automatic"
 }

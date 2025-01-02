@@ -4,7 +4,7 @@ import 'package:tractory/utils/constants.dart';
 import './report_controller.dart';
 
 class ReportPage extends GetView<ReportController> {
-  ReportPage({Key? key}) : super(key: key);
+  const ReportPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -15,20 +15,11 @@ class ReportPage extends GetView<ReportController> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
-        title: Text('Dashboard',
+        title: const Text('Dashboard',
             style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
         backgroundColor: Constants.azreg,
-        actions: [
-          IconButton(
-              onPressed: () {
-                controller.fetchReportData(); // Refresh data
-              },
-              icon: Icon(
-                Icons.refresh_outlined,
-              ))
-        ],
         toolbarHeight: 50,
-        shape: RoundedRectangleBorder(
+        shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(5)),
         ),
       ),
@@ -47,16 +38,25 @@ class ReportPage extends GetView<ReportController> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         SizedBox(
-                          width: width * .39,
-                          height: height * .12,
+                          width: width * .28,
+                          height: height * .10,
                           child: Card(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                Text(
-                                  "Tractors",
-                                  style: Get.theme.textTheme.titleLarge,
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    const Icon(Icons.agriculture,
+                                        size: 20, color: Constants.azreg),
+                                    Text(
+                                      "Tractors",
+                                      style: Get.theme.textTheme.titleSmall,
+                                    ),
+                                  ],
                                 ),
                                 Text(
                                   "${controller.numberOfTractors.value}",
@@ -66,18 +66,123 @@ class ReportPage extends GetView<ReportController> {
                             ),
                           ),
                         ),
-                        Card(),
                         SizedBox(
-                          width: width * .39,
+                          width: width * .28,
+                          height: height * .10,
+                          child: Card(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    const Icon(Icons.handyman_rounded,
+                                        size: 20,
+                                        color: Constants
+                                            .azreg), // Replace with actual icon
+                                    Text(
+                                      "Equipes",
+                                      style: Get.theme.textTheme.titleSmall,
+                                    ),
+                                  ],
+                                ),
+                                Text(
+                                  "${controller.numberOfEquipments.value}",
+                                  style: Get.theme.textTheme.headlineMedium,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: width * .28,
+                          height: height * .10,
+                          child: Card(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    const Icon(Icons.person,
+                                        size: 20,
+                                        color: Constants
+                                            .azreg), // Replace with actual icon
+                                    Text(
+                                      "Drivers",
+                                      style: Get.theme.textTheme.titleSmall,
+                                    ),
+                                  ],
+                                ),
+                                Text(
+                                  "${controller.numberOfDrivers.value}",
+                                  style: Get.theme.textTheme.headlineMedium,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    // SizedBox(
+                    //   width: width * .8,
+                    //   height: height * .12,
+                    //   child: Card(
+                    //     child: Column(
+                    //       crossAxisAlignment: CrossAxisAlignment.center,
+                    //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    //       children: [
+                    //         Row(
+                    //           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    //           crossAxisAlignment: CrossAxisAlignment.center,
+                    //           children: [
+                    //             Icon(Icons.attach_money,
+                    //                 size: 25, color: Constants.azreg),
+                    //             Text(
+                    //               "Revenues",
+                    //               style: Get.theme.textTheme.titleLarge,
+                    //             ),
+                    //           ],
+                    //         ),
+                    //         Text(
+                    //           "${controller.totalRevenue.value.toStringAsFixed(2)} Dinar",
+                    //           style: Get.theme.textTheme.headlineSmall,
+                    //         ),
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
+
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: width * .28,
                           height: height * .12,
                           child: Card(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                Text(
-                                  "Clients",
-                                  style: Get.theme.textTheme.titleLarge,
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    const Icon(Icons.group,
+                                        size: 20, color: Constants.azreg),
+                                    Text(
+                                      "Clients",
+                                      style: Get.theme.textTheme.titleSmall,
+                                    ),
+                                  ],
                                 ),
                                 Text(
                                   "${controller.numberOfClients.value}",
@@ -87,23 +192,96 @@ class ReportPage extends GetView<ReportController> {
                             ),
                           ),
                         ),
+                        SizedBox(
+                          width: width * .28,
+                          height: height * .12,
+                          child: Card(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    const Icon(Icons.receipt,
+                                        size: 20,
+                                        color: Constants
+                                            .azreg), // Replace with actual icon
+                                    Text(
+                                      "Factures",
+                                      style: Get.theme.textTheme.titleSmall,
+                                    ),
+                                  ],
+                                ),
+                                Text(
+                                  "${controller.numberOfInvoices.value}",
+                                  style: Get.theme.textTheme.headlineMedium,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: width * .28,
+                          height: height * .12,
+                          child: Card(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    const Icon(Icons.cancel,
+                                        size: 20,
+                                        color: Constants
+                                            .azreg), // Replace with actual icon
+                                    Text(
+                                      "UnPaid",
+                                      style: Get.theme.textTheme.titleSmall,
+                                    ),
+                                  ],
+                                ),
+                                Text(
+                                  "${controller.noPay.value}",
+                                  style: Get.theme.textTheme.headlineMedium,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                     SizedBox(
-                      width: width * .8,
+                      width: width * .84,
                       height: height * .12,
                       child: Card(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            Text(
-                              "Revenue",
-                              style: Get.theme.textTheme.titleLarge,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const Icon(Icons.paid,
+                                    size: 25, color: Constants.azreg),
+                                const SizedBox(
+                                  width: 15,
+                                ),
+                                Text(
+                                  "Revenus",
+                                  style: Get.theme.textTheme.titleLarge,
+                                ),
+                              ],
                             ),
                             Text(
                               "${controller.totalRevenue.value.toStringAsFixed(2)} Dinar",
-                              style: Get.theme.textTheme.headlineSmall,
+                              style: Get.theme.textTheme.headlineMedium,
                             ),
                           ],
                         ),
@@ -113,6 +291,14 @@ class ReportPage extends GetView<ReportController> {
                 )),
               ],
             )),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => controller.fetchReportData,
+        backgroundColor: Constants.azreg,
+        child: const Icon(
+          Icons.refresh,
+          color: Colors.white,
+        ),
       ),
     );
   }

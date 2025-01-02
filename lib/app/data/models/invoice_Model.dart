@@ -1,4 +1,3 @@
-// lib/data/models/invoice_Model.dart
 class Invoice {
   int? id;
   int usageId;
@@ -43,5 +42,11 @@ class Invoice {
       totalPrice: totalPrice ?? this.totalPrice,
       paymentStatus: paymentStatus ?? this.paymentStatus,
     );
+  }
+
+  // Override toString() method
+  @override
+  String toString() {
+    return 'Invoice(id: $id, usageId: $usageId, totalPrice: $totalPrice, paymentStatus: $paymentStatus)';
   }
 }

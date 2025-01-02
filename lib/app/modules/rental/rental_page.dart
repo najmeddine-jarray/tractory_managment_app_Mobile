@@ -30,11 +30,11 @@ class RentalPage extends GetView<RentalController> {
           borderRadius: BorderRadius.all(Radius.circular(5)),
         ),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(5.0),
-            child: TextFormField(
+      body: Padding(
+        padding: const EdgeInsets.all(5.0),
+        child: Column(
+          children: [
+            TextFormField(
               onChanged: (value) {
                 controller.setFilterText(value);
               },
@@ -48,66 +48,150 @@ class RentalPage extends GetView<RentalController> {
                 ),
               ),
             ),
-          ),
-          Obx(() {
-            if (controller.isLoading.value) {
-              return Center(child: CircularProgressIndicator());
-            } else if (controller.filteredRentals.isEmpty) {
-              return Center(child: Text('No results found'));
-            } else {
-              return Expanded(
-                child: ListView.builder(
-                  itemCount: controller.filteredRentals.length,
-                  itemBuilder: (context, index) {
-                    final rental = controller.filteredRentals[index];
-                    final clientName = controller.clientList
-                        .firstWhere((client) => client.id == rental.clientId,
-                            orElse: () =>
-                                Client(name: '', phone: '', address: ''))
-                        .name;
-                    final tractorName = controller.tractorList
-                        .firstWhere((tractor) => tractor.id == rental.tractorId,
-                            orElse: () => Tractor(
-                                name: '', type: '', image: '', power: 0))
-                        .name;
-                    final equipmentName = controller.equipmentList
-                        .firstWhere(
-                            (equipment) => equipment.id == rental.equipmentId,
-                            orElse: () => Equipment(
-                                name: '', type: '', image: '', priceHours: 0))
-                        .name;
+            Obx(() {
+              if (controller.isLoading.value) {
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              } else if (controller.filteredRentals.isEmpty) {
+                return Center(child: Text('No results found'));
+              } else {
+                return Expanded(
+                  child: ListView.builder(
+                    itemCount: controller.filteredRentals.length,
+                    itemBuilder: (context, index) {
+                      final rental = controller.filteredRentals[index];
+                      final clientName = controller.clientList
+                          .firstWhere((client) => client.id == rental.clientId,
+                              orElse: () =>
+                                  Client(name: '', phone: '', address: ''))
+                          .name;
+                      final tractorName = controller.tractorList
+                          .firstWhere(
+                              (tractor) => tractor.id == rental.tractorId,
+                              orElse: () => Tractor(
+                                  name: '', type: '', image: '', power: 0))
+                          .name;
+                      final equipmentName = controller.equipmentList
+                          .firstWhere(
+                              (equipment) => equipment.id == rental.equipmentId,
+                              orElse: () => Equipment(
+                                  name: '', type: '', image: '', priceHours: 0))
+                          .name;
 
-                    return Card(
-                      child: ListTile(
-                        contentPadding: const EdgeInsets.all(10.0),
-                        title: Text('Rental ID: ${rental.id} |$clientName'),
-                        subtitle: Text(
-                            'Tractor: $tractorName\nEquipment: $equipmentName\nRental Date: ${DateFormat('MM-dd-yyyy').format(rental.rentalDate)}'),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              color: Constants.azreg,
-                              icon: Icon(Icons.edit),
-                              onPressed: () =>
-                                  _showRentalDialog(context, rental: rental),
-                            ),
-                            IconButton(
-                              color: Colors.red,
-                              icon: Icon(Icons.delete),
-                              onPressed: () => _showDeleteConfirmationDialog(
-                                  context, rental.id!),
-                            ),
-                          ],
+                      return Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15.0),
                         ),
-                      ),
-                    );
-                  },
-                ),
-              );
-            }
-          }),
-        ],
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Rental ID and Client Name
+
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    spacing: 5,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      RichText(
+                                        text: TextSpan(
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                          ),
+                                          children: [
+                                            TextSpan(
+                                              text:
+                                                  'Rental ID: ${rental.id} | ',
+                                              style: const TextStyle(
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            TextSpan(
+                                              text: clientName,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Constants.azreg,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+
+                                      // Tractor and Equipment Details
+
+                                      RichText(
+                                        text: TextSpan(
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                          ),
+                                          children: [
+                                            const TextSpan(
+                                              text: 'Tractor: ',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            TextSpan(text: tractorName),
+                                            const TextSpan(text: '\n'),
+                                            const TextSpan(
+                                              text: 'Equipment: ',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            TextSpan(text: equipmentName),
+                                          ],
+                                        ),
+                                      ),
+                                      // Rental Date
+
+                                      Text(
+                                        'Rental Date: ${DateFormat('MM-dd-yyyy').format(rental.rentalDate)}',
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+
+                                  // Action Buttons (Edit and Delete)
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      IconButton(
+                                        icon: const Icon(Icons.edit,
+                                            color: Constants.azreg),
+                                        onPressed: () => _showRentalDialog(
+                                            context,
+                                            rental: rental),
+                                      ),
+                                      IconButton(
+                                        icon: const Icon(Icons.delete,
+                                            color: Colors.red),
+                                        onPressed: () =>
+                                            _showDeleteConfirmationDialog(
+                                                context, rental.id!),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              }
+            }),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showRentalDialog(context),
@@ -245,12 +329,14 @@ class RentalPage extends GetView<RentalController> {
       ),
       confirm: ElevatedButton(
         onPressed: () {
+          final dateFormat = DateFormat('MM-dd-yyyy');
+          final parsedDate = dateFormat.parse(rentalDateController.text);
           final newRental = Rental(
             id: isEdit ? rental!.id : null,
             clientId: int.parse(clientIdController.text),
             tractorId: int.parse(tractorIdController.text),
             equipmentId: int.parse(equipmentIdController.text),
-            rentalDate: DateTime.parse(rentalDateController.text),
+            rentalDate: parsedDate,
           );
           if (isEdit) {
             controller.updateRental(newRental);

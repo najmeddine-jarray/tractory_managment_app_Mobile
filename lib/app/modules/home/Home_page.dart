@@ -157,7 +157,7 @@ class HomePage extends GetView<HomeController> {
               width: .5,
               endIndent: 0,
               indent: 5,
-              color: isDark ? Constants.azreg : Constants.ktiba,
+              color: isDark ? Colors.black : Colors.white,
             ),
             Expanded(
               child: Padding(

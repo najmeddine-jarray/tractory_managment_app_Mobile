@@ -36,7 +36,41 @@ class ExpensePage extends GetView<ExpenseController> {
         padding: const EdgeInsets.all(5.0),
         child: Obx(() {
           if (controller.isLoading.value) {
-            return Center(child: CircularProgressIndicator());
+            return Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 15.0),
+                  child: DropdownButtonFormField<int>(
+                    decoration: InputDecoration(
+                      hintText: 'Tractor',
+                      fillColor: Colors.blueGrey.withOpacity(.1),
+                      filled: true,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(15),
+                        borderSide: BorderSide.none,
+                      ),
+                      prefixIcon: Icon(
+                        Icons.agriculture,
+                      ),
+                    ),
+                    value: controller.selectedTractorId.value,
+                    hint: Text('Select Tractor'),
+                    onChanged: (newValue) {
+                      controller.selectedTractorId.value = newValue;
+                      controller
+                          .filterExpenses(); // Filter expenses based on selection
+                    },
+                    items: controller.tractorList.map((tractor) {
+                      return DropdownMenuItem<int>(
+                        value: tractor.id,
+                        child: Text(tractor.name),
+                      );
+                    }).toList(),
+                  ),
+                ),
+                Center(child: CircularProgressIndicator()),
+              ],
+            );
           } else if (controller.errorMessage.value.isNotEmpty) {
             return Center(
                 child: Text(controller.errorMessage.value,
@@ -143,7 +177,7 @@ class ExpensePage extends GetView<ExpenseController> {
         TextEditingController(text: isEdit ? expense!.fuelCost.toString() : '');
     final dateController = TextEditingController(
         text: isEdit
-            ? DateFormat('MM-dd-yyyy hh:mm:ss').format(expense!.date)
+            ? DateFormat('MM-dd-yyyy HH:mm:ss').format(expense!.date)
             : '');
     final isDark = MediaQuery.platformBrightnessOf(context) == Brightness.dark;
 
@@ -226,7 +260,7 @@ class ExpensePage extends GetView<ExpenseController> {
                 ),
                 onChanged: (DateTime? value) {
                   dateController.text =
-                      DateFormat('MM-dd-yyyy hh:mm:ss').format(value!);
+                      DateFormat('MM-dd-yyyy HH:mm:ss').format(value!);
                 },
               ),
             ],

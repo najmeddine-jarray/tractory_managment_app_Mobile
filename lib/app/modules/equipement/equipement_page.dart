@@ -42,7 +42,30 @@ class EquipmentPage extends GetView<EquipmentController> {
         padding: const EdgeInsets.all(5.0),
         child: Obx(() {
           if (controller.isLoading.value) {
-            return Center(child: CircularProgressIndicator());
+            return Column(
+              children: [
+                TextFormField(
+                  controller: _filterController,
+                  keyboardType: TextInputType.text,
+                  onChanged: (value) {
+                    controller.filterEquipment(value.toLowerCase());
+                  },
+                  decoration: InputDecoration(
+                    filled: true,
+                    hintText: 'Filter by Equipment name or type',
+                    prefixIcon: const Icon(Icons.search_outlined, size: 20),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                Center(child: CircularProgressIndicator()),
+              ],
+            );
           } else if (controller.errorMessage.value.isNotEmpty) {
             return Center(
                 child: Text(controller.errorMessage.value,
@@ -81,53 +104,95 @@ class EquipmentPage extends GetView<EquipmentController> {
                       itemBuilder: (context, index) {
                         final equipment = controller.filteredEquipment[index];
                         return Card(
-                          elevation: 1,
-                          child: ListTile(
-                            contentPadding: const EdgeInsets.all(10.0),
-                            title: Text('${equipment.id} | ${equipment.name}',
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                            subtitle: Row(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(15.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                CachedNetworkImage(
-                                  imageUrl: "${equipment.image}",
-                                  placeholder: (context, url) => Center(
-                                      child: CircularProgressIndicator()),
-                                  errorWidget: (context, url, error) =>
-                                      Icon(Icons.error),
-                                  height: 65, // Adjust as needed
-                                  width: 65, // Adjust as needed
-                                  fit: BoxFit.cover,
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text('Type: ${equipment.type}'),
+                                    // Title Row
                                     Text(
-                                        'Price: ${equipment.priceHours} Dinar'),
-                                    Text(
-                                        'Status: ${equipment.maintenanceStatus}'),
+                                      '${equipment.id} | ${equipment.name}',
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+
+                                    // Content Row with Image and Details
+                                    Row(
+                                      children: [
+                                        // Image
+                                        CachedNetworkImage(
+                                          imageUrl: "${equipment.image}",
+                                          placeholder: (context, url) =>
+                                              const Center(
+                                                  child:
+                                                      CircularProgressIndicator()),
+                                          errorWidget: (context, url, error) =>
+                                              const Icon(Icons.error),
+                                          height: 70, // Adjust as needed
+                                          width: 70, // Adjust as needed
+                                          fit: BoxFit.cover,
+                                        ),
+                                        const SizedBox(width: 15),
+                                        // Details
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Type: ${equipment.type}',
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                            Text(
+                                              'Price: ${equipment.priceHours} Dinar',
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                            Text(
+                                              'Status: ${equipment.maintenanceStatus}',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color: equipment
+                                                            .maintenanceStatus ==
+                                                        "Good"
+                                                    ? Colors.green
+                                                    : Colors.red,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ],
                                 ),
-                              ],
-                            ),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                  color: Constants.azreg,
-                                  icon: Icon(Icons.edit),
-                                  onPressed: () => _showEquipmentDialog(context,
-                                      equipment: equipment),
-                                ),
-                                IconButton(
-                                  color: Colors.red,
-                                  icon: Icon(Icons.delete),
-                                  onPressed: () =>
-                                      _showDeleteConfirmationDialog(
-                                          context, equipment.id!),
+                                Column(
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(Icons.edit,
+                                          color: Constants.azreg),
+                                      onPressed: () => _showEquipmentDialog(
+                                          context,
+                                          equipment: equipment),
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(Icons.delete,
+                                          color: Colors.red),
+                                      onPressed: () =>
+                                          _showDeleteConfirmationDialog(
+                                              context, equipment.id!),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),

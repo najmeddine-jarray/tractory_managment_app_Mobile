@@ -36,30 +36,141 @@ class InvoicePage extends GetView<InvoiceController> {
             itemCount: controller.invoiceList.length,
             itemBuilder: (context, index) {
               final invoice = controller.invoiceList[index];
+              final relatedUsage =
+                  controller.getUsageByUsageId(invoice.usageId);
+              final relatedRental = relatedUsage != null
+                  ? controller.getRentalById(relatedUsage.rentalId)
+                  : null;
+              final relatedClient = relatedRental != null
+                  ? controller.getClientById(relatedRental.clientId)
+                  : null;
               return Card(
-                child: ListTile(
-                  title: Text('Invoice ID: ${invoice.id}'),
-                  subtitle: Text(
-                      'Usage ID: ${invoice.usageId}\nTotal Price: ${invoice.totalPrice} Dinar\nPayment Status: ${invoice.paymentStatus}'),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      IconButton(
-                        icon: Icon(
-                          Icons.edit,
-                          color: Constants.azreg,
-                        ),
-                        onPressed: () =>
-                            _showInvoiceDialog(context, invoice: invoice),
+                      Column(
+                        spacing: 5,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          RichText(
+                            text: TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: 'Facture ${invoice.id}: ',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: invoice.paymentStatus,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: invoice.paymentStatus == 'Paid'
+                                        ? Colors.green
+                                        : Colors.redAccent,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          RichText(
+                            text: TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: '${invoice.usageId} ',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: relatedClient != null
+                                      ? '| ${relatedClient!.name} '
+                                      : '| No Client Name ',
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: relatedClient != null
+                                      ? '| ${relatedClient!.phone} '
+                                      : '| No Phone Available ',
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontStyle: FontStyle.italic,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          RichText(
+                            text: TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: 'Total Price: ',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text:
+                                      '${invoice.totalPrice.toStringAsFixed(2)} Dinar',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.normal,
+                                    color: Colors.green, // أو أي لون ترغب فيه
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                      IconButton(
-                        icon: Icon(Icons.delete, color: Colors.red),
-                        onPressed: () =>
-                            _showDeleteConfirmationDialog(context, invoice.id!),
+                      Column(
+                        children: [
+                          IconButton(
+                            icon: Icon(
+                              Icons.edit,
+                              color: Constants.azreg,
+                            ),
+                            onPressed: () =>
+                                _showInvoiceDialog(context, invoice: invoice),
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.delete, color: Colors.red),
+                            onPressed: () => _showDeleteConfirmationDialog(
+                                context, invoice.id!),
+                          ),
+                        ],
                       ),
                     ],
                   ),
                 ),
+                // trailing: Row(
+                //   mainAxisSize: MainAxisSize.min,
+                //   children: [
+                //     IconButton(
+                //       icon: Icon(
+                //         Icons.edit,
+                //         color: Constants.azreg,
+                //       ),
+                //       onPressed: () =>
+                //           _showInvoiceDialog(context, invoice: invoice),
+                //     ),
+                //     IconButton(
+                //       icon: Icon(Icons.delete, color: Colors.red),
+                //       onPressed: () =>
+                //           _showDeleteConfirmationDialog(context, invoice.id!),
+                //     ),
+                //   ],
+                // ),
               );
             },
           );
@@ -162,7 +273,7 @@ class InvoicePage extends GetView<InvoiceController> {
         onPressed: () => Get.back(), // Close dialog
         child: Text(
           'Cancel',
-          style: TextStyle(color: Colors.red),
+          style: const TextStyle(color: Colors.red),
         ),
       ),
       confirmTextColor: Colors.white,
@@ -173,23 +284,23 @@ class InvoicePage extends GetView<InvoiceController> {
   void _showDeleteConfirmationDialog(BuildContext context, int id) {
     Get.defaultDialog(
       title: 'Delete Invoice',
-      content: Text('Are you sure you want to delete this invoice?'),
+      content: const Text('Are you sure you want to delete this invoice?'),
       confirm: ElevatedButton(
         onPressed: () {
           controller.deleteInvoice(id);
           Get.back(); // Close dialog
         },
-        child: Text('Delete'),
         style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+        child: const Text('Delete'),
       ),
       cancel: TextButton(
         onPressed: () => Get.back(), // Close dialog
-        child: Text(
+        child: const Text(
           'Cancel',
         ),
       ),
-      titlePadding: EdgeInsets.symmetric(vertical: 20),
-      contentPadding: EdgeInsets.all(20),
+      titlePadding: const EdgeInsets.symmetric(vertical: 20),
+      contentPadding: const EdgeInsets.all(20),
       radius: 10,
     );
   }

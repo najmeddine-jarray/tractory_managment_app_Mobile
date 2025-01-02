@@ -46,7 +46,7 @@ class RentalController extends GetxController {
       rentalList.assignAll(rentals);
       applyFilter(); // Apply filter after fetching rentals
     } catch (e) {
-      print("Error fetching rentals: $e");
+      // print("Error fetching rentals: $e");
     } finally {
       isLoading(false);
     }
@@ -58,7 +58,7 @@ class RentalController extends GetxController {
       var clients = await clientService.getAllClients();
       clientList.assignAll(clients);
     } catch (e) {
-      print("Error fetching clients: $e");
+      // print("Error fetching clients: $e");
     }
   }
 
@@ -68,7 +68,7 @@ class RentalController extends GetxController {
       var tractors = await tractorService.getAllTractors();
       tractorList.assignAll(tractors);
     } catch (e) {
-      print("Error fetching tractors: $e");
+      // print("Error fetching tractors: $e");
     }
   }
 
@@ -78,7 +78,7 @@ class RentalController extends GetxController {
       var equipment = await equipmentService.getAllEquipment();
       equipmentList.assignAll(equipment);
     } catch (e) {
-      print("Error fetching equipment: $e");
+      // print("Error fetching equipment: $e");
     }
   }
 
@@ -122,7 +122,7 @@ class RentalController extends GetxController {
       await rentalService.addRental(rental);
       fetchRentals();
     } catch (e) {
-      print("Error adding rental: $e");
+      // print("Error adding rental: $e");
     }
   }
 
@@ -144,7 +144,7 @@ class RentalController extends GetxController {
       await rentalService.deleteRental(id);
       fetchRentals();
     } catch (e) {
-      print("Error deleting rental: $e");
+      // print("Error deleting rental: $e");
     }
   }
 }

@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import './Splash_controller.dart';
 
 class SplashPage extends GetView<SplashController> {
-  const SplashPage({Key? key}) : super(key: key);
+  const SplashPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,15 +16,15 @@ class SplashPage extends GetView<SplashController> {
               Column(
                 children: [
                   AnimatedContainer(
-                    duration: Duration(milliseconds: 2000),
+                    duration: const Duration(milliseconds: 2000),
                     curve: Curves.fastLinearToSlowEaseIn,
                     height: MediaQuery.of(context).size.height /
                         controller.fontSize,
                   ),
                   AnimatedOpacity(
-                    duration: Duration(milliseconds: 1000),
+                    duration: const Duration(milliseconds: 1000),
                     opacity: controller.textOpacity,
-                    child: Text(
+                    child: const Text(
                       'Sanity APP',
                       style: TextStyle(
                         color: Colors.black,
@@ -37,11 +37,11 @@ class SplashPage extends GetView<SplashController> {
               ),
               Center(
                 child: AnimatedOpacity(
-                  duration: Duration(milliseconds: 2000),
+                  duration: const Duration(milliseconds: 2000),
                   curve: Curves.fastLinearToSlowEaseIn,
                   opacity: controller.containerOpacity,
                   child: AnimatedContainer(
-                      duration: Duration(milliseconds: 2000),
+                      duration: const Duration(milliseconds: 2000),
                       curve: Curves.fastLinearToSlowEaseIn,
                       height: MediaQuery.of(context).size.width /
                           controller.containerSize,

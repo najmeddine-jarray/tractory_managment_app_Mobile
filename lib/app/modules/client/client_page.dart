@@ -2,37 +2,57 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tractory/utils/constants.dart';
 import '../../data/models/client_Model.dart';
-import '../../data/services/client_Services.dart';
 import 'client_controller.dart';
 
 class ClientPage extends GetView<ClientController> {
+  const ClientPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
-        title: Text('Clients',
+        title: const Text('Clients',
             style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
         backgroundColor: Constants.azreg,
         toolbarHeight: 50,
         actions: [
           IconButton(
               onPressed: () => controller.fetchClients(),
-              icon: Icon(
+              icon: const Icon(
                 Icons.refresh_outlined,
               ))
         ],
-        shape: RoundedRectangleBorder(
+        shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(5)),
         ),
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
-          return Center(child: CircularProgressIndicator());
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(5),
+                child: TextField(
+                  controller: controller.filterController,
+                  decoration: InputDecoration(
+                    filled: true,
+                    hintText: 'Filter by Client name',
+                    prefixIcon: const Icon(Icons.search_outlined),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+              ),
+              const Center(child: CircularProgressIndicator()),
+            ],
+          );
         } else if (controller.errorMessage.value.isNotEmpty) {
           return Center(
               child: Text(controller.errorMessage.value,
-                  style: TextStyle(color: Colors.red)));
+                  style: const TextStyle(color: Colors.red)));
         } else {
           return Column(
             children: [
@@ -56,64 +76,138 @@ class ClientPage extends GetView<ClientController> {
                   if (controller.filteredClients.isEmpty) {
                     return Center(child: Text('No results'));
                   } else {
-                    return ListView.builder(
-                      itemCount: controller.filteredClients.length,
-                      itemBuilder: (context, index) {
-                        final client = controller.filteredClients[index];
-                        return Card(
-                          elevation: 5,
-                          child: ListTile(
-                            contentPadding: const EdgeInsets.all(10.0),
-                            title: Text("${client.id} | ${client.name}",
-                                style: TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.bold)),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(client.phone),
-                                Text(client.address),
-                              ],
+                    return Padding(
+                      padding:
+                          const EdgeInsets.only(bottom: 5, left: 5, right: 5),
+                      child: ListView.builder(
+                        itemCount: controller.filteredClients.length,
+                        itemBuilder: (context, index) {
+                          final client = controller.filteredClients[index];
+                          return Card(
+                            elevation: 5,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15.0),
                             ),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                  icon:
-                                      Icon(Icons.edit, color: Constants.azreg),
-                                  onPressed: () => _showClientDialog(context,
-                                      client: client),
-                                ),
-                                IconButton(
-                                  icon: Icon(Icons.delete, color: Colors.red),
-                                  onPressed: () => Get.defaultDialog(
-                                    title: 'Delete Client',
-                                    middleText:
-                                        'Are you sure you want to delete this client?',
-                                    confirm: ElevatedButton(
-                                      onPressed: () {
-                                        controller.deleteClient(client.id!);
-                                        Get.back(); // Close dialog
-                                      },
-                                      child: Text('Delete'),
-                                      style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.red),
-                                    ),
-                                    cancel: TextButton(
-                                      onPressed: () =>
-                                          Get.back(), // Close dialog
-                                      child: Text('Cancel'),
-                                    ),
-                                    titlePadding:
-                                        EdgeInsets.symmetric(vertical: 20),
-                                    contentPadding: EdgeInsets.all(20),
-                                    radius: 10,
+                            margin: const EdgeInsets.symmetric(
+                                horizontal: 10.0, vertical: 8.0),
+                            child: Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // Header Row: Icon, Title, and Action Buttons
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          const Icon(
+                                            Icons.person_outline,
+                                            size: 24,
+                                            color: Colors.blueGrey,
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            "${client.id} | ${client.name}",
+                                            style: const TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          IconButton(
+                                            icon: const Icon(Icons.edit,
+                                                color: Constants.azreg),
+                                            tooltip: "Edit Client",
+                                            onPressed: () => _showClientDialog(
+                                                context,
+                                                client: client),
+                                          ),
+                                          IconButton(
+                                            icon: const Icon(Icons.delete,
+                                                color: Colors.red),
+                                            tooltip: "Delete Client",
+                                            onPressed: () => Get.defaultDialog(
+                                              title: 'Delete Client',
+                                              middleText:
+                                                  'Are you sure you want to delete this client?',
+                                              confirm: ElevatedButton(
+                                                onPressed: () {
+                                                  controller
+                                                      .deleteClient(client.id!);
+                                                  Get.back(); // Close dialog
+                                                },
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor: Colors.red,
+                                                ),
+                                                child: const Text('Delete'),
+                                              ),
+                                              cancel: TextButton(
+                                                onPressed: () =>
+                                                    Get.back(), // Close dialog
+                                                child: const Text('Cancel'),
+                                              ),
+                                              titlePadding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 20.0),
+                                              contentPadding:
+                                                  const EdgeInsets.all(20.0),
+                                              radius: 10.0,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
                                   ),
-                                ),
-                              ],
+                                  const Divider(
+                                      thickness: 1, color: Colors.grey),
+                                  const SizedBox(height: 10),
+                                  // Client Details
+                                  Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.phone,
+                                        color: Colors.green,
+                                        size: 20,
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        client.phone,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.location_on_outlined,
+                                        color: Colors.orange,
+                                        size: 20,
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Expanded(
+                                        child: Text(
+                                          client.address,
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     );
                   }
                 }),
@@ -177,7 +271,7 @@ class ClientPage extends GetView<ClientController> {
                   return null;
                 },
               ),
-              SizedBox(height: 5),
+              const SizedBox(height: 5),
               TextFormField(
                 controller: phoneController,
                 keyboardType: TextInputType.phone,
@@ -201,7 +295,7 @@ class ClientPage extends GetView<ClientController> {
                   return null;
                 },
               ),
-              SizedBox(height: 5),
+              const SizedBox(height: 5),
               TextFormField(
                 controller: addressController,
                 keyboardType: TextInputType.text,
@@ -258,13 +352,13 @@ class ClientPage extends GetView<ClientController> {
       ),
       cancel: TextButton(
         onPressed: () => Get.back(), // Close dialog
-        child: Text(
+        child: const Text(
           'Cancel',
           style: TextStyle(color: Colors.red),
         ),
       ),
-      titlePadding: EdgeInsets.symmetric(vertical: 20),
-      contentPadding: EdgeInsets.all(20),
+      titlePadding: const EdgeInsets.symmetric(vertical: 20),
+      contentPadding: const EdgeInsets.all(20),
       radius: 10,
     );
   }

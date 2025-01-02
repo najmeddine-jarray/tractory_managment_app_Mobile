@@ -78,7 +78,7 @@ class LoadingScreen {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  SpinKitFadingCircle(color: AppColors.seedColor, size: 60),
+                  const SpinKitFadingCircle(color: AppColors.seedColor, size: 60),
                   StreamBuilder<String>(
                     stream: textController.stream,
                     builder: (context, snapshot) {

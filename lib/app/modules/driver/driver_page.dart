@@ -20,7 +20,7 @@ class DriverPage extends GetView<DriverController> {
         actions: [
           IconButton(
               onPressed: () => controller.fetchDrivers(),
-              icon: Icon(
+              icon: const Icon(
                 Icons.refresh_outlined,
               ))
         ],
@@ -33,11 +33,30 @@ class DriverPage extends GetView<DriverController> {
         padding: const EdgeInsets.all(5.0),
         child: Obx(() {
           if (controller.isLoading.value) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (controller.errorMessage.value.isNotEmpty) {
-            return Center(
-                child: Text(controller.errorMessage.value,
-                    style: TextStyle(color: Colors.red)));
+            return Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 15),
+                  child: TextFormField(
+                    controller: _filterController,
+                    keyboardType: TextInputType.text,
+                    onChanged: (value) {
+                      controller.filterDrivers(value.toLowerCase());
+                    },
+                    decoration: InputDecoration(
+                      filled: true,
+                      hintText: 'Filter by Driver name',
+                      prefixIcon: const Icon(Icons.search_outlined, size: 20),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(15),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                  ),
+                ),
+                const Center(child: CircularProgressIndicator()),
+              ],
+            );
           } else {
             return Column(
               children: [
@@ -59,7 +78,7 @@ class DriverPage extends GetView<DriverController> {
                 ),
                 // Show "No Results" message if no drivers are found
                 if (controller.filteredDrivers.isEmpty)
-                  Expanded(
+                  const Expanded(
                     child: Center(
                       child: Text('No Results',
                           style: TextStyle(color: Colors.grey, fontSize: 18)),
@@ -72,56 +91,101 @@ class DriverPage extends GetView<DriverController> {
                       itemBuilder: (context, index) {
                         final driver = controller.filteredDrivers[index];
                         return Card(
-                          elevation: 1,
-                          child: ListTile(
-                            contentPadding: const EdgeInsets.all(10.0),
-                            title: Text("${driver.id} | ${driver.name}",
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold)),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(driver.phone),
-                                Text(driver.licenseNumber),
-                              ],
-                            ),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                  icon:
-                                      Icon(Icons.edit, color: Constants.azreg),
-                                  onPressed: () => _showDriverDialog(context,
-                                      driver: driver),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // Driver ID and Name
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          "${driver.id} | ${driver.name}",
+                                          style: const TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 10.0),
+                                    // Driver Details
+                                    Row(
+                                      children: [
+                                        const Icon(Icons.phone,
+                                            size: 16, color: Constants.azreg),
+                                        const SizedBox(width: 8.0),
+                                        Text(
+                                          driver.phone,
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 5.0),
+                                    Row(
+                                      children: [
+                                        const Icon(Icons.credit_card,
+                                            size: 16, color: Constants.azreg),
+                                        const SizedBox(width: 8.0),
+                                        Text(
+                                          driver.licenseNumber,
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
-                                IconButton(
-                                  icon: Icon(Icons.delete, color: Colors.red),
-                                  onPressed: () => Get.defaultDialog(
-                                    title: 'Delete Driver',
-                                    middleText:
-                                        'Are you sure you want to delete this driver?',
-                                    confirm: ElevatedButton(
-                                      onPressed: () {
-                                        controller.deleteDriver(driver.id!);
-                                        Get.back(); // Close dialog
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.red),
-                                      child: Text(
-                                        'Delete',
+                                Column(
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(Icons.edit,
+                                          color: Constants.azreg),
+                                      onPressed: () => _showDriverDialog(
+                                          context,
+                                          driver: driver),
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(Icons.delete,
+                                          color: Colors.red),
+                                      onPressed: () => Get.defaultDialog(
+                                        title: 'Delete Driver',
+                                        middleText:
+                                            'Are you sure you want to delete this driver?',
+                                        confirm: ElevatedButton(
+                                          onPressed: () {
+                                            controller.deleteDriver(driver.id!);
+                                            Get.back(); // Close dialog
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.red,
+                                          ),
+                                          child: const Text('Delete'),
+                                        ),
+                                        cancel: TextButton(
+                                          onPressed: () =>
+                                              Get.back(), // Close dialog
+                                          child: const Text('Cancel'),
+                                        ),
+                                        titlePadding:
+                                            const EdgeInsets.symmetric(
+                                                vertical: 20),
+                                        contentPadding:
+                                            const EdgeInsets.all(20),
                                       ),
                                     ),
-                                    cancel: TextButton(
-                                      onPressed: () =>
-                                          Get.back(), // Close dialog
-                                      child: Text(
-                                        'Cancel',
-                                      ),
-                                    ),
-                                    titlePadding:
-                                        EdgeInsets.symmetric(vertical: 20),
-                                    contentPadding: EdgeInsets.all(20),
-                                  ),
+                                  ],
                                 ),
                               ],
                             ),
@@ -137,11 +201,11 @@ class DriverPage extends GetView<DriverController> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showDriverDialog(context),
-        child: Icon(
+        backgroundColor: Constants.azreg,
+        child: const Icon(
           Icons.add,
           color: Colors.white,
         ),
-        backgroundColor: Constants.azreg,
       ),
     );
   }
@@ -149,11 +213,11 @@ class DriverPage extends GetView<DriverController> {
   void _showDriverDialog(BuildContext context, {Driver? driver}) {
     final isEdit = driver != null;
     final nameController =
-        TextEditingController(text: isEdit ? driver!.name : '');
+        TextEditingController(text: isEdit ? driver.name : '');
     final licenseNumberController =
-        TextEditingController(text: isEdit ? driver!.licenseNumber : '');
+        TextEditingController(text: isEdit ? driver.licenseNumber : '');
     final phoneController =
-        TextEditingController(text: isEdit ? driver!.phone : '');
+        TextEditingController(text: isEdit ? driver.phone : '');
 
     final _formKey = GlobalKey<FormState>(); // Key for the Form
     final isDark = MediaQuery.platformBrightnessOf(context) == Brightness.dark;
@@ -219,7 +283,7 @@ class DriverPage extends GetView<DriverController> {
               ),
               SizedBox(height: 5),
               TextFormField(
-                controller: phoneController,
+                controller: phoneController, keyboardType: TextInputType.phone,
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: Colors.blueGrey.withOpacity(.1),
@@ -248,7 +312,7 @@ class DriverPage extends GetView<DriverController> {
         onPressed: () {
           if (_formKey.currentState?.validate() ?? false) {
             final newDriver = Driver(
-              id: isEdit ? driver!.id : null,
+              id: isEdit ? driver.id : null,
               name: nameController.text,
               licenseNumber: licenseNumberController.text,
               phone: phoneController.text,

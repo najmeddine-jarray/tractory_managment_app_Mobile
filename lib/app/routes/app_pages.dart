@@ -1,3 +1,5 @@
+// ignore_for_file: constant_identifier_names
+
 import 'package:tractory/app/modules/client/client_bindings.dart';
 import 'package:tractory/app/modules/client/client_page.dart';
 import 'package:tractory/app/modules/driver/driver_bindings.dart';
@@ -40,7 +42,7 @@ class AppPages {
     ),
     GetPage(
       name: Routes.CLIENT_MANAGEMENT,
-      page: () => ClientPage(),
+      page: () => const ClientPage(),
       binding: ClientBindings(),
     ),
     GetPage(
@@ -70,7 +72,7 @@ class AppPages {
     ),
     GetPage(
       name: Routes.USAGE_MANAGEMENT,
-      page: () => UsagePage(),
+      page: () => const UsagePage(),
       binding: UsageBindings(),
     ),
     GetPage(

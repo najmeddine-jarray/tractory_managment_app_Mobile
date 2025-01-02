@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:date_field/date_field.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -18,7 +20,7 @@ class UsagePage extends GetView<UsageController> {
   void _showDeleteConfirmationDialog(BuildContext context, int id) {
     Get.defaultDialog(
       title: 'Delete Usage',
-      content: Text('Are you sure you want to delete this usage?'),
+      content: const Text('Are you sure you want to delete this usage?'),
       textConfirm: 'Delete',
       textCancel: 'Cancel',
       confirmTextColor: Colors.white,
@@ -42,7 +44,7 @@ class UsagePage extends GetView<UsageController> {
         actions: [
           IconButton(
               onPressed: () => controller.fetchAllData(),
-              icon: Icon(
+              icon: const Icon(
                 Icons.refresh_outlined,
               ))
         ],
@@ -55,7 +57,9 @@ class UsagePage extends GetView<UsageController> {
         padding: const EdgeInsets.all(5.0),
         child: Obx(() {
           if (controller.isLoading.value) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
+          } else if (controller.usageList.isEmpty) {
+            return const Center(child: Text('No results found'));
           } else {
             return ListView.builder(
               itemCount: controller.usageList.length,
@@ -98,15 +102,6 @@ class UsagePage extends GetView<UsageController> {
                             licenseNumber: '',
                             phone: ''))
                     .name;
-                final rentalId = controller.rentalList
-                    .firstWhere((r) => r.id == usage.rentalId,
-                        orElse: () => Rental(
-                            id: -1,
-                            clientId: 0,
-                            tractorId: 0,
-                            equipmentId: 0,
-                            rentalDate: DateTime.now()))
-                    .id;
                 final rental = controller.rentalList
                     .firstWhere((r) => r.id == usage.rentalId,
                         orElse: () => Rental(
@@ -134,135 +129,198 @@ class UsagePage extends GetView<UsageController> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15.0),
                   ),
-                  child: Column(
-                    children: [
-                      ListTile(
-                        title: Row(
+                  // Adds a subtle shadow for depth
+
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Top Row with ID, Client Name, and Date
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text('${usage.id} | ${clientName}'),
-
-                            Text(
-                              '${usage.location} ',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Constants.azreg,
+                            RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: '${usage.id} ',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: ' | ',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: clientName,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                      color: Constants.azreg,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            // Text(
-                            //   '${DateFormat('MM-dd-yyyy').format(usage.startTime)}',
-                            //   style: TextStyle(
-                            //     fontWeight: FontWeight.bold,
-                            //     color: Constants.azreg,
-                            //   ),
-                            // ),
+                            Text(
+                              DateFormat('MM-dd-yyyy').format(usage.startTime),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                                color: Colors.grey,
+                              ),
+                            ),
                           ],
                         ),
-                      ),
-                      ExpansionTile(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
-                        title: Row(
-                          children: [
-                            Text('| ${tractorName} |'),
-                            Text(' ${driverName} | '),
-                            Text('${equipmentName} |'),
-                          ],
-                        ),
-                        children: [
-                          ListTile(
-                            contentPadding: const EdgeInsets.all(10.0),
-                            title: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '${DateFormat('MM-dd-yyyy | HH:mm:ss').format(usage.startTime)}',
-                                ),
-                                Text(
-                                  '${DateFormat('MM-dd-yyyy | HH:mm:ss').format(usage.endTime)}',
-                                ),
-                                // Text(
-                                // 'Hours: ${usage.hoursUsed} * ${equipmentPrice}'),
-                                Text('Task: ${usage.taskDescription}'),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      ExpansionTile(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15.0),
-                          side: BorderSide.none,
-                        ),
-                        title: Text(
-                            'Facture: ${invoice.id} | ${invoice.paymentStatus}'),
-                        children: [
-                          ListTile(
-                            title: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '${DateFormat('MM-dd-yyyy | HH:mm:ss').format(usage.startTime)}',
-                                ),
-                                Text(
-                                  '${DateFormat('MM-dd-yyyy | HH:mm:ss').format(usage.endTime)}',
-                                ),
-                                Text(
-                                    'Hours: ${usage.hoursUsed} * ${equipmentPrice}'),
-                                Text(
-                                  'Total Price: ${invoice.totalPrice} Dinar',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Constants.azreg,
-                                  ),
-                                ),
-                                // Add more invoice details here if needed
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      ListTile(
-                        title: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                        const SizedBox(height: 8.0),
+
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Second Row with Driver, Tractor, and Equipment
+                                RichText(
+                                  text: TextSpan(
+                                    style: const TextStyle(fontSize: 14),
+                                    children: [
+                                      TextSpan(text: driverName),
+                                      const TextSpan(text: ' | '),
+                                      TextSpan(text: tractorName),
+                                      const TextSpan(text: ' | '),
+                                      TextSpan(text: equipmentName),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 8.0),
+
+                                // Invoice Details
+                                RichText(
+                                  text: TextSpan(
+                                    style: const TextStyle(fontSize: 14),
+                                    children: [
+                                      const TextSpan(text: 'Facture: '),
+                                      TextSpan(
+                                        text: '${invoice.id} | ',
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      TextSpan(
+                                        text: invoice.paymentStatus,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: invoice.paymentStatus == 'Paid'
+                                              ? Colors.green
+                                              : Colors.red,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 8.0),
+
+                                // Usage Time Information
+
+                                Text(
+                                  '${DateFormat('MM-dd-yyyy | HH:mm:ss').format(usage.startTime)}',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                Text(
+                                  '${DateFormat('MM-dd-yyyy | HH:mm:ss').format(usage.endTime)}',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                  ),
+                                ),
+
+                                const SizedBox(height: 8.0),
+
+                                // Hours and Price Calculation
+                                RichText(
+                                  text: TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text:
+                                            '${usage.hoursUsed.toInt()} H : ${(usage.hoursUsed * 60 % 60).toInt()} Min',
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                          color: Constants.azreg,
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text: ' | ${usage.location}',
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 8.0),
+
+                                RichText(
+                                  text: TextSpan(
+                                    children: [
+                                      const TextSpan(
+                                        text: 'Total : ',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text:
+                                            '${usage.hoursUsed.toStringAsFixed(2)} * $equipmentPrice = ${invoice.totalPrice.toStringAsFixed(2)} Dinar',
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                          color: Colors.green,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 12.0),
+                              ],
+                            ),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 IconButton(
-                                  icon: Icon(
-                                    Icons.edit,
-                                    color: Constants.azreg,
-                                  ),
+                                  icon: const Icon(Icons.edit,
+                                      color: Constants.azreg),
                                   onPressed: () => Get.to(() => UsageFormPage(
                                         usage: usage,
                                         controller: controller,
                                       )),
                                 ),
                                 IconButton(
-                                  icon: Icon(
-                                    Icons.delete,
-                                    color: Colors.red,
-                                  ),
+                                  icon: const Icon(Icons.delete,
+                                      color: Colors.red),
                                   onPressed: () =>
                                       _showDeleteConfirmationDialog(
                                           context, usage.id!),
                                 ),
                               ],
                             ),
-                            Text(
-                              '${DateFormat('MM-dd-yyyy').format(usage.startTime)}',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Constants.azreg,
-                              ),
-                            ),
                           ],
                         ),
-                      ),
-                    ],
+
+                        // Edit and Delete Buttons
+                      ],
+                    ),
                   ),
                 );
               },
@@ -272,11 +330,11 @@ class UsagePage extends GetView<UsageController> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => Get.to(() => UsageFormPage(controller: controller)),
-        child: Icon(
+        backgroundColor: Constants.azreg,
+        child: const Icon(
           Icons.add,
           color: Colors.white,
         ),
-        backgroundColor: Constants.azreg,
       ),
     );
   }
@@ -285,39 +343,23 @@ class UsagePage extends GetView<UsageController> {
 class UsageFormPage extends GetView<UsageController> {
   final Usage? usage;
   final UsageController controller;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController tractorIdController = TextEditingController();
+  final TextEditingController equipmentIdController = TextEditingController();
+  final TextEditingController driverIdController = TextEditingController();
+  final TextEditingController rentalIdController = TextEditingController();
+  final TextEditingController locationController = TextEditingController();
+  final TextEditingController startTimeController = TextEditingController();
+  final TextEditingController endTimeController = TextEditingController();
+  final TextEditingController taskDescriptionController =
+      TextEditingController();
 
   UsageFormPage({this.usage, required this.controller});
-
-  final _formKey = GlobalKey<FormState>();
-
   @override
   Widget build(BuildContext context) {
-    final tractorIdController = TextEditingController();
-    final equipmentIdController = TextEditingController();
-    final driverIdController = TextEditingController();
-    final rentalIdController = TextEditingController();
-    final locationController = TextEditingController();
-    final startTimeController = TextEditingController();
-    final endTimeController = TextEditingController();
-    final taskDescriptionController = TextEditingController();
-
-    if (usage != null) {
-      tractorIdController.text = usage!.tractorId.toString();
-      equipmentIdController.text = usage!.equipmentId.toString();
-      driverIdController.text = usage!.driverId.toString();
-      rentalIdController.text = usage!.rentalId.toString();
-      locationController.text = usage!.location;
-      startTimeController.text =
-          DateFormat('MM-dd-yyyy HH:mm:ss').format(usage!.startTime);
-      endTimeController.text =
-          DateFormat('MM-dd-yyyy HH:mm:ss').format(usage!.endTime);
-      taskDescriptionController.text = usage!.taskDescription;
-    }
-
     return Scaffold(
       appBar: AppBar(
         title: Text(usage == null ? 'Add Usage' : 'Update Usage'),
-        backgroundColor: Constants.azreg,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -327,7 +369,16 @@ class UsageFormPage extends GetView<UsageController> {
             children: [
               DropdownButtonFormField<int>(
                 value: usage?.tractorId,
-                decoration: InputDecoration(labelText: 'Tractor'),
+                decoration: InputDecoration(
+                  hintText: 'Tractor',
+                  filled: true,
+                  fillColor: Colors.blueGrey.withOpacity(.1),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                    borderSide: BorderSide.none,
+                  ),
+                  prefixIcon: const Icon(Icons.agriculture, size: 20),
+                ),
                 items: controller.tractorList.map((tractor) {
                   return DropdownMenuItem<int>(
                     value: tractor.id,
@@ -335,16 +386,28 @@ class UsageFormPage extends GetView<UsageController> {
                   );
                 }).toList(),
                 onChanged: (value) {
-                  tractorIdController.text = value.toString();
+                  tractorIdController.text = value?.toString() ?? '';
+                  print(
+                      "Selected Tractor ID: ${tractorIdController.text}"); // Print selected tractor ID
                 },
                 validator: (value) {
                   if (value == null) return 'Please select a tractor';
                   return null;
                 },
               ),
+              const SizedBox(height: 10),
               DropdownButtonFormField<int>(
                 value: usage?.equipmentId,
-                decoration: InputDecoration(labelText: 'Equipment'),
+                decoration: InputDecoration(
+                  hintText: 'Equipment',
+                  filled: true,
+                  fillColor: Colors.blueGrey.withOpacity(.1),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                    borderSide: BorderSide.none,
+                  ),
+                  prefixIcon: const Icon(Icons.build, size: 20),
+                ),
                 items: controller.equipmentList.map((equipment) {
                   return DropdownMenuItem<int>(
                     value: equipment.id,
@@ -352,16 +415,28 @@ class UsageFormPage extends GetView<UsageController> {
                   );
                 }).toList(),
                 onChanged: (value) {
-                  equipmentIdController.text = value.toString();
+                  equipmentIdController.text = value?.toString() ?? '';
+                  print(
+                      "Selected equipmentIdController ID: ${equipmentIdController.text}");
                 },
                 validator: (value) {
                   if (value == null) return 'Please select equipment';
                   return null;
                 },
               ),
+              const SizedBox(height: 10),
               DropdownButtonFormField<int>(
                 value: usage?.driverId,
-                decoration: InputDecoration(labelText: 'Driver'),
+                decoration: InputDecoration(
+                  hintText: 'Driver',
+                  filled: true,
+                  fillColor: Colors.blueGrey.withOpacity(.1),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                    borderSide: BorderSide.none,
+                  ),
+                  prefixIcon: const Icon(Icons.person, size: 20),
+                ),
                 items: controller.driverList.map((driver) {
                   return DropdownMenuItem<int>(
                     value: driver.id,
@@ -369,16 +444,28 @@ class UsageFormPage extends GetView<UsageController> {
                   );
                 }).toList(),
                 onChanged: (value) {
-                  driverIdController.text = value.toString();
+                  driverIdController.text = value?.toString() ?? '';
+                  print(
+                      "Selected driverIdController ID: ${driverIdController.text}");
                 },
                 validator: (value) {
                   if (value == null) return 'Please select a driver';
                   return null;
                 },
               ),
+              const SizedBox(height: 10),
               DropdownButtonFormField<int>(
                 value: usage?.rentalId,
-                decoration: InputDecoration(labelText: 'Rental'),
+                decoration: InputDecoration(
+                  hintText: 'Rental',
+                  filled: true,
+                  fillColor: Colors.blueGrey.withOpacity(.1),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                    borderSide: BorderSide.none,
+                  ),
+                  prefixIcon: const Icon(Icons.assignment, size: 20),
+                ),
                 items: controller.rentalList.map((rental) {
                   return DropdownMenuItem<int>(
                     value: rental.id,
@@ -386,16 +473,27 @@ class UsageFormPage extends GetView<UsageController> {
                   );
                 }).toList(),
                 onChanged: (value) {
-                  rentalIdController.text = value.toString();
+                  rentalIdController.text = value?.toString() ?? '';
+                  print(
+                      "Selected rentalIdController ID: ${rentalIdController.text}");
                 },
                 validator: (value) {
                   if (value == null) return 'Please select a rental';
                   return null;
                 },
               ),
+              const SizedBox(height: 10),
               TextFormField(
                 controller: locationController,
-                decoration: InputDecoration(labelText: 'Location'),
+                decoration: InputDecoration(
+                  hintText: 'Location',
+                  filled: true,
+                  fillColor: Colors.blueGrey.withOpacity(.1),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter location';
@@ -403,13 +501,23 @@ class UsageFormPage extends GetView<UsageController> {
                   return null;
                 },
               ),
+              const SizedBox(height: 10),
               DateTimeFormField(
                 initialValue: usage?.startTime,
-                decoration: InputDecoration(labelText: 'Start Time'),
+                decoration: InputDecoration(
+                  hintText: 'Start Time',
+                  filled: true,
+                  fillColor: Colors.blueGrey.withOpacity(.1),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
                 mode: DateTimeFieldPickerMode.dateAndTime,
                 onChanged: (DateTime? value) {
-                  startTimeController.text =
-                      DateFormat('MM-dd-yyyy HH:mm:ss').format(value!);
+                  startTimeController.text = value != null
+                      ? DateFormat('MM-dd-yyyy HH:mm:ss').format(value)
+                      : '';
                 },
                 validator: (value) {
                   if (value == null) {
@@ -418,13 +526,23 @@ class UsageFormPage extends GetView<UsageController> {
                   return null;
                 },
               ),
+              const SizedBox(height: 10),
               DateTimeFormField(
                 initialValue: usage?.endTime,
-                decoration: InputDecoration(labelText: 'End Time'),
+                decoration: InputDecoration(
+                  hintText: 'End Time',
+                  filled: true,
+                  fillColor: Colors.blueGrey.withOpacity(.1),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
                 mode: DateTimeFieldPickerMode.dateAndTime,
                 onChanged: (DateTime? value) {
-                  endTimeController.text =
-                      DateFormat('MM-dd-yyyy HH:mm:ss').format(value!);
+                  endTimeController.text = value != null
+                      ? DateFormat('MM-dd-yyyy HH:mm:ss').format(value)
+                      : '';
                 },
                 validator: (value) {
                   if (value == null) {
@@ -433,9 +551,18 @@ class UsageFormPage extends GetView<UsageController> {
                   return null;
                 },
               ),
+              const SizedBox(height: 10),
               TextFormField(
                 controller: taskDescriptionController,
-                decoration: InputDecoration(labelText: 'Task Description'),
+                decoration: InputDecoration(
+                  hintText: 'Task Description',
+                  filled: true,
+                  fillColor: Colors.blueGrey.withOpacity(.1),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter task description';
@@ -443,7 +570,7 @@ class UsageFormPage extends GetView<UsageController> {
                   return null;
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 10),
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
@@ -455,6 +582,16 @@ class UsageFormPage extends GetView<UsageController> {
 
                       final hoursUsed =
                           endTime.difference(startTime).inMinutes / 60.0;
+                      print("Tractor ID: ${tractorIdController.text}");
+                      print("Equipment ID: ${equipmentIdController.text}");
+                      print("Driver ID: ${driverIdController.text}");
+                      print("Rental ID: ${rentalIdController.text}");
+                      print("Location: ${locationController.text}");
+                      print("Start Time: ${startTimeController.text}");
+                      print("End Time: ${endTimeController.text}");
+                      print("End Time: ${hoursUsed}");
+                      print(
+                          "Task Description: ${taskDescriptionController.text}");
 
                       final newUsage = Usage(
                         id: usage?.id,
@@ -489,9 +626,6 @@ class UsageFormPage extends GetView<UsageController> {
                   }
                 },
                 child: Text(usage == null ? 'Add Usage' : 'Update Usage'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Constants.azreg,
-                ),
               ),
             ],
           ),
